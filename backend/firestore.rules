@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    match /articles/{articleId} {
+
+      // lectura para todos
+      allow read: if true;
+
+      // escritura para todos, solo validando tipos básicos
+     allow create, update: if
+  request.resource.data.authorId is number
+  && request.resource.data.title is string
+  && request.resource.data.publishedAt is timestamp
+  && request.resource.data.urlToImage is string;
+
+       
+    }
+  }
+}

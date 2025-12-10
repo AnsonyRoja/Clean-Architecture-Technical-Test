@@ -1,0 +1,10 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // Esta regla simple evita el error de compilación.
+      allow read, write: if true;
+    }
+  }
+}

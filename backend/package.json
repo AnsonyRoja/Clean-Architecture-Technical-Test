@@ -1,0 +1,12 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "In this folder are all the [Firebase Firestore](https://firebase.google.com/docs/firestore) related files.  You will use this folder to add the schema of the *Articles* you want to upload for the app and to add the rules that enforce this schema.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,32 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "auth": {
+    "port": 3003
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "firestore": {
+      "port": 3002,
+      "host": "192.168.0.103"
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000,
+      "host": "192.168.0.103"
+    },
+    "singleProjectMode": true,
+    "storage": {
+      "port": 3001,
+      "host": "192.168.0.103"
+    },
+    "auth": {
+      "port": 3003,
+      "host": "192.168.0.103"
+    }
+  }
+}
