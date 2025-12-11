@@ -112,83 +112,123 @@ class _ArticleEditorScreenState extends State<ArticleEditorScreen> {
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: Form(
-            autovalidateMode: AutovalidateMode.always,
-            key: _formKey,
-            child: BlocListener<ArticleBlocFB, ArticleStateFB>(
-              listener: (context, state) {
-                if (state is ArticleLoading) {
-                  setState(() => isPublishingArticle = true);
-                } else {
-                  setState(() => isPublishingArticle = false);
-                }
+          child: Column(
+            children: [
+              Form(
+                autovalidateMode: AutovalidateMode.always,
+                key: _formKey,
+                child: BlocListener<ArticleBlocFB, ArticleStateFB>(
+                  listener: (context, state) {
+                    if (state is ArticleLoading) {
+                      setState(() => isPublishingArticle = true);
+                    } else {
+                      setState(() => isPublishingArticle = false);
+                    }
 
-                if (state is ArticleCreated) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
-                  Navigator.pop(context);
-                }
+                    if (state is ArticleCreated) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.message)),
+                      );
+                      Navigator.pop(context);
+                    }
 
-                if (state is ArticleErrorFB) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: <Widget>[
-                    // Título
-                    _buildTextFormF(width, 1),
-                    const SizedBox(height: 15),
+                    if (state is ArticleErrorFB) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.message)),
+                      );
+                    }
+                  },
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 50),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          // Título
+                          _buildTextFormF(width, 1),
 
-                    // Botón de imagen
-                    ElevatedButton.icon(
-                      onPressed: _pickImage,
-                      icon: const Icon(Icons.camera_alt, color: Colors.white),
-                      label: const Text(
-                        'Attach Image',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                      ),
-                    ),
+                          // Botón de imagen
+                          _selectedImage == null
+                              ? _buildAtachImage(theme)
+                              : SizedBox(),
 
-                    // Imagen seleccionada
-                    if (_selectedImage != null)
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.file(
-                            _selectedImage!,
-                            width: double.infinity,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          ),
-                          if (isUploadingImage)
-                            const CircularProgressIndicator(
-                                color: Colors.white),
+                          // Imagen seleccionada
+                          if (_selectedImage != null) _buildImageSelected(),
+
+                          _buildTextFormF(width, 15)
                         ],
                       ),
-                    const SizedBox(height: 20),
-
-                    _buildTextFormF(width, 15)
-                  ],
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
         bottomSheet: _buildButtonPublish(theme, width),
       ),
+    );
+  }
+
+  ElevatedButton _buildAtachImage(ThemeData theme) {
+    return ElevatedButton.icon(
+      onPressed: _pickImage,
+      icon: const Icon(Icons.camera_alt, color: Colors.white),
+      label: const Text(
+        'Attach Image',
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: theme.colorScheme.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      ),
+    );
+  }
+
+  Stack _buildImageSelected() {
+    return Stack(
+      children: [
+        Image.file(
+          _selectedImage!,
+          width: double.infinity,
+          height: 200,
+          fit: BoxFit.cover,
+        ),
+
+        // Botón de eliminar
+        Positioned(
+          top: 10,
+          right: 10,
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedImage = null;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 22,
+              ),
+            ),
+          ),
+        ),
+
+        // Loader si está subiendo
+        if (isUploadingImage)
+          const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          ),
+      ],
     );
   }
 
@@ -232,7 +272,8 @@ class _ArticleEditorScreenState extends State<ArticleEditorScreen> {
   Container _buildTextFormF(double width, maxLines) {
     return Container(
       width: width * 0.9,
-      margin: EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(
+          bottom: maxLines > 1 ? 75 : 25, top: maxLines > 1 ? 25 : 0),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
