@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:news_app_clean_architecture/features/daily_news/presentation/pages/helpers/cleaning_text.dart';
 import '../../domain/entities/article.dart';
 
 class ArticleWidget extends StatelessWidget {
@@ -38,96 +39,146 @@ class ArticleWidget extends StatelessWidget {
   }
 
   Widget _buildImage(BuildContext context) {
-    return CachedNetworkImage(
-        imageUrl: article!.urlToImage!,
-        imageBuilder: (context, imageProvider) => Padding(
-              padding: const EdgeInsetsDirectional.only(end: 14),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 3,
-                  height: double.maxFinite,
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.08),
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover)),
-                ),
-              ),
-            ),
-        progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
-              padding: const EdgeInsetsDirectional.only(end: 14),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 3,
-                  height: double.maxFinite,
-                  child: CupertinoActivityIndicator(),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.08),
+    double width = MediaQuery.of(context).size.width / 3;
+    double height = width * 1.2; // altura proporcional
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 14),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.0),
+        child: CachedNetworkImage(
+          imageUrl: article!.urlToImage!,
+          imageBuilder: (context, imageProvider) => Stack(
+            children: [
+              // Imagen
+              Container(
+                width: width,
+                height: height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-            ),
-        errorWidget: (context, url, error) => Padding(
-              padding: const EdgeInsetsDirectional.only(end: 14),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
+              // Overlay degradado para efecto moderno
+              Positioned(
+                top: width * 0.12,
+                left: height / 12,
                 child: Container(
-                  width: MediaQuery.of(context).size.width / 3,
-                  height: double.maxFinite,
-                  child: Icon(Icons.error),
+                  width: width * 0.8,
+                  height: height * 0.8,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(15),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.2),
+                        Colors.black.withValues(alpha: 0.1),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ));
+            ],
+          ),
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              Container(
+            width: width,
+            height: height,
+            color: Colors.grey[200],
+            child: const Center(
+              child: CupertinoActivityIndicator(
+                radius: 12,
+              ),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            width: width,
+            height: height,
+            color: Colors.grey[300],
+            child: const Center(
+              child: Icon(
+                Icons.broken_image,
+                color: Colors.redAccent,
+                size: 28,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildTitleAndDescription() {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 7),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            Text(
-              article!.title ?? '',
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontFamily: 'Butler',
-                fontWeight: FontWeight.w900,
-                fontSize: 18,
-                color: Colors.black87,
-              ),
-            ),
-
-            // Description
+            // Columna con título, descripción y fecha
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  article!.description ?? '',
-                  maxLines: 2,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  Text(
+                    article!.title ?? '',
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: 'Butler',
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      color: Colors.black87,
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  // Description
+                  Text(
+                    cleanText(article!.description).isEmpty
+                        ? (article!.content ??
+                            '') // <-- si content es null, usar ''
+                        : article!.description ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  // Datetime
+                  Row(
+                    children: [
+                      const Icon(Icons.timeline_outlined, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        article!.publishedAt ?? '',
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-
-            // Datetime
-            Row(
-              children: [
-                const Icon(Icons.timeline_outlined, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  article!.publishedAt!,
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
+            // Divider vertical con gradient
+            Container(
+              width: 3,
+              margin: const EdgeInsets.only(left: 10),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.blue, Colors.lightBlueAccent],
                 ),
-              ],
+                borderRadius: BorderRadius.all(Radius.circular(2)),
+              ),
             ),
           ],
         ),

@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart';
-import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_fb_bloc.dart';
-import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_fb_event.dart';
-import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_fb_state.dart';
+import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/firebase/article/remote_article_fb_bloc.dart';
+import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/firebase/article/remote_article_fb_event.dart';
+import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/firebase/article/remote_article_fb_state.dart';
 
 class ArticleEditorScreen extends StatefulWidget {
   const ArticleEditorScreen({Key? key}) : super(key: key);
@@ -102,12 +102,13 @@ class _ArticleEditorScreenState extends State<ArticleEditorScreen> {
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Ionicons.chevron_back),
+            icon: const Icon(
+              Ionicons.chevron_back,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          backgroundColor: Colors.white,
           elevation: 0,
         ),
         body: SingleChildScrollView(

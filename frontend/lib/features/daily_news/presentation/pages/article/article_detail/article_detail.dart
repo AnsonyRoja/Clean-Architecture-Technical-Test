@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:news_app_clean_architecture/features/daily_news/presentation/pages/helpers/cleaning_text.dart';
 import '../../../../../../injection_container.dart';
 import '../../../../domain/entities/article.dart';
 import '../../../bloc/article/local/local_article_bloc.dart';
@@ -9,17 +11,22 @@ import '../../../bloc/article/local/local_article_event.dart';
 
 class ArticleDetailsView extends HookWidget {
   final ArticleEntity? article;
+  final bool isSaved;
 
-  const ArticleDetailsView({Key? key, this.article}) : super(key: key);
+  const ArticleDetailsView({Key? key, this.article, this.isSaved = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<LocalArticleBloc>(),
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: _buildBody(),
-        floatingActionButton: _buildFloatingActionButton(),
+      child: InteractiveViewer(
+        child: Scaffold(
+          appBar: _buildAppBar(),
+          body: _buildBody(context),
+          floatingActionButton:
+              isSaved == true ? SizedBox() : _buildFloatingActionButton(),
+        ),
       ),
     );
   }
@@ -30,18 +37,18 @@ class ArticleDetailsView extends HookWidget {
         builder: (context) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => _onBackButtonTapped(context),
-          child: const Icon(Ionicons.chevron_back, color: Colors.black),
+          child: const Icon(Ionicons.chevron_back),
         ),
       ),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
           _buildArticleTitleAndDate(),
-          _buildArticleImage(),
+          _buildArticleImage(context),
           _buildArticleDescription(),
         ],
       ),
@@ -80,17 +87,82 @@ class ArticleDetailsView extends HookWidget {
     );
   }
 
-  Widget _buildArticleImage() {
-    return Container(
-      width: double.maxFinite,
-      height: 250,
-      margin: const EdgeInsets.only(top: 14),
-      child: Image.network(
-        article?.urlToImage ?? "",
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildMaintenance404();
-        },
+  Widget _buildArticleImage(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
+    return GestureDetector(
+      onTap: () {
+        if ((article?.urlToImage ?? "").isNotEmpty) {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (_, __, ___) => GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Scaffold(
+                  backgroundColor: Colors.black.withOpacity(0.5),
+                  body: Center(
+                    child: Hero(
+                      tag: article!.urlToImage!,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.network(
+                          article!.urlToImage!,
+                          width: width * 0.95,
+                          height: height * 0.6,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return SizedBox(
+                              width: width * 0.95,
+                              height: height * 0.6,
+                              child: const Center(
+                                child: CupertinoActivityIndicator(
+                                  radius: 14,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildMaintenance404();
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Hero(
+          tag: article?.urlToImage ?? "",
+          child: ClipRRect(
+            child: Image.network(
+              article?.urlToImage ?? "",
+              width: double.maxFinite,
+              height: 250,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return SizedBox(
+                  width: double.maxFinite,
+                  height: 250,
+                  child: const Center(
+                    child: CupertinoActivityIndicator(radius: 12),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return _buildMaintenance404();
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -144,11 +216,21 @@ class ArticleDetailsView extends HookWidget {
     );
   }
 
+  String getFormattedArticleText() {
+    String description = cleanText(article!.description);
+    String content = cleanText(article!.content);
+
+    if (description.isEmpty || content.isEmpty) {
+      return content;
+    }
+    return '$description\n\n$content';
+  }
+
   Widget _buildArticleDescription() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
       child: Text(
-        '${article!.description ?? ''}\n\n${article!.content ?? ''}',
+        getFormattedArticleText(),
         style: const TextStyle(fontSize: 16),
       ),
     );
@@ -158,7 +240,7 @@ class ArticleDetailsView extends HookWidget {
     return Builder(
       builder: (context) => FloatingActionButton(
         onPressed: () => _onFloatingActionButtonPressed(context),
-        child: const Icon(Ionicons.bookmark, color: Colors.white),
+        child: const Icon(Ionicons.star, color: Colors.white),
       ),
     );
   }
