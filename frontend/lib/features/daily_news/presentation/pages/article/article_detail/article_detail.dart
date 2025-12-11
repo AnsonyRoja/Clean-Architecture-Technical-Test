@@ -85,7 +85,62 @@ class ArticleDetailsView extends HookWidget {
       width: double.maxFinite,
       height: 250,
       margin: const EdgeInsets.only(top: 14),
-      child: Image.network(article!.urlToImage!, fit: BoxFit.cover),
+      child: Image.network(
+        article?.urlToImage ?? "",
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildMaintenance404();
+        },
+      ),
+    );
+  }
+
+  Widget _buildMaintenance404() {
+    return Stack(
+      children: [
+        // Imagen de mantenimiento
+        Positioned.fill(
+          child: Image.asset(
+            "assets/warnings/maintenance.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+
+        // Desvanecido negro
+        Positioned.fill(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black54, // Oscurecido final
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // Texto 404 centrado
+        const Center(
+          child: Text(
+            "404",
+            style: TextStyle(
+              fontSize: 80,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  blurRadius: 10,
+                  color: Colors.black87,
+                  offset: Offset(0, 3),
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

@@ -59,6 +59,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+    - assets/warnings/maintenance.png
+
   fonts:
     - family: Muli
       fonts:
