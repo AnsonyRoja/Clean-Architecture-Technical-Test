@@ -93,7 +93,7 @@ class _NewsIconWithSparklesState extends State<NewsIconWithSparkles>
                   Icons.star_rounded,
                   size: widget.starSize,
                   color: Colors.amberAccent.withValues(
-                    alpha: 0.8,
+                    alpha: 0.9,
                   ),
                 ),
               ),
