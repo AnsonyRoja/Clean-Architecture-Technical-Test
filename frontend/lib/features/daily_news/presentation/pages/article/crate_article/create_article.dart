@@ -9,6 +9,7 @@ import 'package:news_app_clean_architecture/features/daily_news/domain/entities/
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/firebase/article/remote_article_fb_bloc.dart';
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/firebase/article/remote_article_fb_event.dart';
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/firebase/article/remote_article_fb_state.dart';
+import 'package:news_app_clean_architecture/features/daily_news/presentation/pages/helpers/audio_players.dart';
 
 class ArticleEditorScreen extends StatefulWidget {
   const ArticleEditorScreen({Key? key}) : super(key: key);
@@ -240,7 +241,12 @@ class _ArticleEditorScreenState extends State<ArticleEditorScreen> {
         width: double.infinity,
         height: 70,
         child: ElevatedButton.icon(
-          onPressed: isPublishingArticle ? null : _publishArticle,
+          onPressed: isPublishingArticle
+              ? null
+              : () {
+                  _publishArticle();
+                  playClickSound();
+                },
           icon: isPublishingArticle
               ? const SizedBox(
                   width: 24,

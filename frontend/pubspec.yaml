@@ -46,6 +46,7 @@ dependencies:
   #chached image
   cached_network_image: ^3.2.0
   image_picker: ^1.2.1
+  audioplayers: ^6.5.1
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +62,7 @@ flutter:
 
   assets:
     - assets/warnings/maintenance.png
+    - assets/sounds/just_pop.mp3
 
   fonts:
     - family: Muli
