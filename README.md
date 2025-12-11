@@ -17,6 +17,11 @@
 
 ---
 
+- Para esta version, se utilizo el canal de flutter stable 
+
+```
+flutter channel stable
+```
 
 # Applicant Showcase App
 Welcome to the repository for our Applicant Showcase App - an application designed for job applicants of Symmetry to showcase their capacity to learn and program good code.
