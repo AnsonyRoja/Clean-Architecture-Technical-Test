@@ -101,7 +101,7 @@ class ArticleDetailsView extends HookWidget {
               pageBuilder: (_, __, ___) => GestureDetector(
                 onTap: () => Navigator.of(context).pop(),
                 child: Scaffold(
-                  backgroundColor: Colors.black.withOpacity(0.5),
+                  backgroundColor: Colors.black.withValues(alpha: 0.5),
                   body: Center(
                     child: Hero(
                       tag: article!.urlToImage!,
@@ -220,8 +220,10 @@ class ArticleDetailsView extends HookWidget {
     String description = cleanText(article!.description);
     String content = cleanText(article!.content);
 
-    if (description.isEmpty || content.isEmpty) {
+    if (description.isEmpty) {
       return content;
+    } else if (content.isEmpty) {
+      return description;
     }
     return '$description\n\n$content';
   }
