@@ -17,7 +17,7 @@
 
 ---
 
-- Para esta version, se utilizo el canal de flutter stable 
+- Para esta version, se utilizo el canal de flutter stable o la version 3.38.4
 
 ```
 flutter channel stable
