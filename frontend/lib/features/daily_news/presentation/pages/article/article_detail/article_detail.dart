@@ -229,9 +229,11 @@ class ArticleDetailsView extends HookWidget {
   Widget _buildArticleDescription() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
-      child: Text(
+      child: SelectableText(
         getFormattedArticleText(),
         style: const TextStyle(fontSize: 16),
+        showCursor: true, // opcional: muestra cursor al seleccionar
+        cursorColor: Colors.blue, // opcional
       ),
     );
   }
