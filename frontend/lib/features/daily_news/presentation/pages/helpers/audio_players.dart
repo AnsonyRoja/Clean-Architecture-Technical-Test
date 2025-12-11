@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 
 final AudioPlayer _audioPlayer = AudioPlayer();
 
-void playClickSound() async {
-  await _audioPlayer.play(AssetSource('sounds/just_pop.mp3'));
+void playClickSound(AssetSource sound) async {
+  print('Sonido $sound');
+  await _audioPlayer.play(sound);
 }

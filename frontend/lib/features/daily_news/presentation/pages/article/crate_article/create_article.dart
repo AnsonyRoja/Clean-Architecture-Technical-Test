@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,8 @@ class _ArticleEditorScreenState extends State<ArticleEditorScreen> {
   bool isUploadingImage = false;
   bool isPublishingArticle = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  AssetSource justPop = AssetSource("sounds/just_pop.mp3");
+  AssetSource camera = AssetSource("sounds/camera_fotos.mp3");
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _bodyController = TextEditingController();
 
@@ -174,7 +176,10 @@ class _ArticleEditorScreenState extends State<ArticleEditorScreen> {
 
   ElevatedButton _buildAtachImage(ThemeData theme) {
     return ElevatedButton.icon(
-      onPressed: _pickImage,
+      onPressed: () {
+        _pickImage();
+        playClickSound(camera);
+      },
       icon: const Icon(Icons.camera_alt, color: Colors.white),
       label: const Text(
         'Attach Image',
@@ -245,7 +250,7 @@ class _ArticleEditorScreenState extends State<ArticleEditorScreen> {
               ? null
               : () {
                   _publishArticle();
-                  playClickSound();
+                  playClickSound(justPop);
                 },
           icon: isPublishingArticle
               ? const SizedBox(

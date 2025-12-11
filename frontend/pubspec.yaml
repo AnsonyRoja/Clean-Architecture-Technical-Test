@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/warnings/maintenance.png
     - assets/sounds/just_pop.mp3
+    - assets/sounds/camera_fotos.mp3
 
   fonts:
     - family: Muli
