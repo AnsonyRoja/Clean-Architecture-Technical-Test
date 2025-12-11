@@ -15,7 +15,7 @@ class DailyNews extends StatelessWidget {
     return _buildPage();
   }
 
-  _buildAppbar(BuildContext context) {
+  AppBar _buildAppbar(BuildContext context) {
     return AppBar(
       title: const Text(
         'Daily News',
@@ -33,7 +33,7 @@ class DailyNews extends StatelessWidget {
     );
   }
 
-  _buildPage() {
+  Widget _buildPage() {
     return BlocBuilder<RemoteArticlesBloc, RemoteArticlesState>(
       builder: (context, state) {
         if (state is RemoteArticlesLoading) {
@@ -71,7 +71,10 @@ class DailyNews extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: REPLACE ROUTE WITH YOUR "ADD ARTICLE" PAGE
+          Navigator.pushNamed(
+            context,
+            '/CreateArticles',
+          );
         },
         child: const Icon(Icons.add),
       ),

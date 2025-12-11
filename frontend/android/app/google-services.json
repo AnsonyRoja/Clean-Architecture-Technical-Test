@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "570088897974",
+    "project_id": "journalist-cee6a",
+    "storage_bucket": "journalist-cee6a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570088897974:android:6784359c13de4ddd599517",
+        "android_client_info": {
+          "package_name": "com.example.news_app_clean_architecture"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIrhB3PzETeP7Ebk1MCLcyOjFcntAmQkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
